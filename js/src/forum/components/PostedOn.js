@@ -13,7 +13,9 @@ export default class PostedOn extends Component {
 
     return (
       <Tooltip text={this.getPostedOn(post)}>
-        <span className="PostedOn">{icon(this.getIcon(post))} {post.postedOn()}</span>
+        <span className="PostedOn">
+          {icon(this.getIcon(post))} {post.postedOn()}
+        </span>
       </Tooltip>
     );
   }
@@ -25,23 +27,23 @@ export default class PostedOn extends Component {
   getIcon(post) {
     switch (post.postedOn()) {
       case 'Windows':
-        return 'fab fa-windows'
+        return 'fab fa-windows';
       case 'Linux':
-        return 'fab fa-linux'
+        return 'fab fa-linux';
       case 'Mac OS':
-        return 'fab fa-apple'
+        return 'fab fa-apple';
       case 'Android':
-        return 'fab fa-android'
+        return 'fab fa-android';
       case 'iPhone':
-        return 'fab fa-apple'
+        return 'fab fa-apple';
       case 'iPad':
-        return 'fab fa-apple'
+        return 'fab fa-apple';
       case 'BlackBerry':
-        return 'fab fa-blackberry'
+        return 'fab fa-blackberry';
       case 'Mobile':
-        return 'fas fa-mobile-alt'
+        return 'fas fa-mobile-alt';
       default:
-        return 'fas fa-globe'
+        return 'fas fa-globe';
     }
   }
 }
