@@ -11,7 +11,7 @@
 
 namespace Datlechin\PostedOn;
 
-use Datlechin\PostedOn\Listener\SavePostedOnToPost;
+use Datlechin\PostedOn\Listeners\SavePostedOnToPost;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving;

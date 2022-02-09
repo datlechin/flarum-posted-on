@@ -1,6 +1,6 @@
 <?php
 
-namespace Datlechin\PostedOn\Listener;
+namespace Datlechin\PostedOn\Listeners;
 
 use Flarum\Post\Event\Saving;
 
@@ -20,12 +20,9 @@ class SavePostedOnToPost
 
         $osArray = array(
             '/windows/i' => 'Windows',
-            '/macintosh|mac os x/i' => 'Mac OS X',
-            '/mac_powerpc/i' => 'Mac OS 9',
+            '/mac/i' => 'Mac OS',
             '/linux/i' => 'Linux',
-            '/ubuntu/i' => 'Ubuntu',
             '/iphone/i' => 'iPhone',
-            '/ipod/i' => 'iPod',
             '/ipad/i' => 'iPad',
             '/android/i' => 'Android',
             '/blackberry/i' => 'BlackBerry',
