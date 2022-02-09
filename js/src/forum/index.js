@@ -10,6 +10,9 @@ app.initializers.add('datlechin/flarum-posted-on', () => {
 
   extend(CommentPost.prototype, 'headerItems', function (items) {
     const post = this.attrs.post;
+
+    if (post.postedOn() === null) return;
+
     items.add('postedOn', PostedOn.component({ post }));
   });
 });
