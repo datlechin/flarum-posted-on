@@ -21,6 +21,7 @@ class SavePostedOnToPost
         $osArray = array(
             '/windows/i' => 'Windows',
             '/mac/i' => 'Mac OS',
+            '/ubuntu/i' => 'Ubuntu',
             '/linux/i' => 'Linux',
             '/iphone/i' => 'iPhone',
             '/ipad/i' => 'iPad',
