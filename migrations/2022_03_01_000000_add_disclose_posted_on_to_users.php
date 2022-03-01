@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Builder;
 return [
     'up' => function (Builder $schema) {
         $schema->table('users', function (Blueprint $table) {
-            $table->boolean('disclose_posted_on')->default(true);
+            $table->integer('disclose_posted_on')->default(1);
         });
     },
     'down' => function (Builder $schema) {
