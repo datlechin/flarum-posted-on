@@ -29,9 +29,9 @@ export default class PostedOn extends Component {
       case 'Windows':
         return 'fab fa-windows';
       case 'Ubuntu':
-          return 'fab fa-ubuntu';
+        return 'fab fa-ubuntu';
       case 'Linux':
-         return 'fab fa-linux';
+        return 'fab fa-linux';
       case 'Mac OS':
         return 'fab fa-apple';
       case 'Android':
