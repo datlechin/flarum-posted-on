@@ -8,9 +8,10 @@ class SavePostedOnToPost
 {
     public function handle(Saving $event)
     {
+        $attributes = $event->data['attributes'];
         $post = $event->post;
 
-        $post->posted_on = $this->getOperatingSystem();
+        if ($attributes['content']) $post->posted_on = $this->getOperatingSystem();
     }
 
     private function getOperatingSystem()
