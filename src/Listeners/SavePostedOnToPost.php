@@ -11,7 +11,7 @@ class SavePostedOnToPost
         $attributes = $event->data['attributes'];
         $post = $event->post;
 
-        if ($attributes['content']) $post->posted_on = $this->getOperatingSystem();
+        if (isset($attributes['content'])) $post->posted_on = $this->getOperatingSystem();
     }
 
     private function getOperatingSystem()
