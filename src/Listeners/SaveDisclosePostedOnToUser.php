@@ -9,10 +9,10 @@ class SaveDisclosePostedOnToUser
 {
     public function handle(Saving $event)
     {
-        $user = $event->user;
-        $data = $event->data;
-        $attributes = Arr::get($data, 'attributes', []);
+        $attributes = Arr::get($event->data, 'attributes', []);
 
-        if (isset($attributes['disclosePostedOn'])) $user->disclose_posted_on = $attributes['disclosePostedOn'];
+        if (isset($attributes['disclosePostedOn'])) {
+            $event->user->disclose_posted_on = $attributes['disclosePostedOn'];
+        }
     }
 }

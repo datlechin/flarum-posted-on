@@ -11,6 +11,10 @@ export default class PostedOn extends Component {
   view() {
     const post = this.attrs.post;
 
+    if (post.postedOn() === '' || post.postedOn() === null) {
+      return;
+    }
+
     return (
       <Tooltip text={this.getPostedOn(post)}>
         <span className="PostedOn">
@@ -21,7 +25,9 @@ export default class PostedOn extends Component {
   }
 
   getPostedOn(post) {
-    return app.translator.trans('datlechin-posted-on.forum.post.posted_on_text', { posted_on: post.postedOn() });
+    return app.translator.trans('datlechin-posted-on.forum.post.posted_on_text', {
+      posted_on: post.postedOn(),
+    });
   }
 
   getIcon(post) {
