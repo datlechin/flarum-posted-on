@@ -15,12 +15,14 @@ class SavePostedOnToPost
         }
     }
 
-    protected function getOperatingSystem()
+    private function getOperatingSystem()
     {
         $userAgent = $_SERVER['HTTP_USER_AGENT'];
         $osPlatform = null;
 
         $osArray = [
+            '/windows nt 11/i' => 'Windows 11',
+            '/windows nt 10/i' => 'Windows 10',
             '/windows/i' => 'Windows',
             '/mac/i' => 'Mac OS',
             '/ubuntu/i' => 'Ubuntu',
@@ -30,6 +32,10 @@ class SavePostedOnToPost
             '/android/i' => 'Android',
             '/blackberry/i' => 'BlackBerry',
             '/webos/i' => 'Mobile',
+            '/pixel 5/i' => 'Pixel 5',
+            '/pixel 6/i' => 'Pixel 6',
+            '/pixel 7/i' => 'Pixel 7',
+            '/manjaro/i' => 'Manjaro',
         ];
 
         foreach ($osArray as $regex => $value) {
