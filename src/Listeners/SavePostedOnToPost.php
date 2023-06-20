@@ -24,7 +24,7 @@ class SavePostedOnToPost
             '/windows nt 11/i' => 'Windows 11',
             '/windows nt 10/i' => 'Windows 10',
             '/windows/i' => 'Windows',
-            '/mac/i' => 'Mac OS',
+            '/mac/i' => 'macOS',
             '/ubuntu/i' => 'Ubuntu',
             '/linux/i' => 'Linux',
             '/iphone/i' => 'iPhone',

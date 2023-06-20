@@ -38,7 +38,7 @@ export default class PostedOn extends Component {
         return 'fab fa-ubuntu';
       case 'Linux':
         return 'fab fa-linux';
-      case 'Mac OS':
+      case 'macOS':
         return 'fab fa-apple';
       case 'Android':
         return 'fab fa-android';
