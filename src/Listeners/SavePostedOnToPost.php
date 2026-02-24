@@ -3,47 +3,59 @@
 namespace Datlechin\PostedOn\Listeners;
 
 use Flarum\Post\Event\Saving;
+use Laminas\Diactoros\ServerRequestFactory;
 
 class SavePostedOnToPost
 {
     public function handle(Saving $event)
     {
-        $attributes = $event->data['attributes'];
-
-        if (isset($attributes['content'])) {
+        if (isset($event->data['attributes']['content'])) {
             $event->post->posted_on = $this->getOperatingSystem();
         }
     }
 
-    private function getOperatingSystem()
+    private function getOperatingSystem(): ?string
     {
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        $osPlatform = null;
+        $request = ServerRequestFactory::fromGlobals();
+        $userAgent = $request->getHeaderLine('User-Agent');
 
-        $osArray = [
-            '/windows nt 11/i' => 'Windows 11',
-            '/windows nt 10/i' => 'Windows 10',
-            '/windows/i' => 'Windows',
-            '/mac/i' => 'macOS',
-            '/ubuntu/i' => 'Ubuntu',
-            '/linux/i' => 'Linux',
-            '/iphone/i' => 'iPhone',
-            '/ipad/i' => 'iPad',
-            '/android/i' => 'Android',
-            '/blackberry/i' => 'BlackBerry',
-            '/webos/i' => 'Mobile',
-            '/pixel 5/i' => 'Pixel 5',
-            '/pixel 6/i' => 'Pixel 6',
-            '/pixel 7/i' => 'Pixel 7',
-            '/manjaro/i' => 'Manjaro',
-        ];
-
-        foreach ($osArray as $regex => $value) {
-            if (preg_match($regex, $userAgent)) {
-                $osPlatform = $value;
-            }
+        if (preg_match('/iPhone OS (\d+[._]\d+)/i', $userAgent, $m)) {
+            return 'iOS ' . str_replace('_', '.', $m[1]);
+        }
+        if (preg_match('/iPad.*OS (\d+[._]\d+)/i', $userAgent, $m)) {
+            return 'iPadOS ' . str_replace('_', '.', $m[1]);
+        }
+        if (preg_match('/Mac OS X (\d+[._]\d+(?:[._]\d+)?)/i', $userAgent, $m)) {
+            return 'macOS ' . str_replace('_', '.', $m[1]);
+        }
+        if (preg_match('/Windows NT 10\.0.*Build\/(\d{5,})/i', $userAgent, $m)) {
+            return ((int) $m[1] >= 22000) ? 'Windows 11' : 'Windows 10';
+        }
+        if (preg_match('/Windows NT 10/i', $userAgent)) {
+            return 'Windows 10';
+        }
+        if (preg_match('/Windows NT 6\.3/i', $userAgent)) {
+            return 'Windows 8.1';
+        }
+        if (preg_match('/Windows NT 6\.\d/i', $userAgent)) {
+            return 'Windows';
+        }
+        if (preg_match('/Android (\d+(\.\d+)?)/i', $userAgent, $m)) {
+            return 'Android ' . $m[1];
+        }
+        if (preg_match('/Ubuntu/i', $userAgent)) {
+            return 'Ubuntu';
+        }
+        if (preg_match('/Manjaro/i', $userAgent)) {
+            return 'Manjaro';
+        }
+        if (preg_match('/Linux/i', $userAgent)) {
+            return 'Linux';
+        }
+        if (preg_match('/BlackBerry/i', $userAgent)) {
+            return 'BlackBerry';
         }
 
-        return $osPlatform;
+        return null;
     }
 }

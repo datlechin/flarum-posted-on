@@ -1,24 +1,20 @@
 import app from 'flarum/forum/app';
 import Component from 'flarum/common/Component';
 import Tooltip from 'flarum/common/components/Tooltip';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 
 export default class PostedOn extends Component {
-  oninit(vnode) {
-    super.oninit(vnode);
-  }
-
   view() {
     const post = this.attrs.post;
 
-    if (post.postedOn() === '' || post.postedOn() === null) {
+    if (!post.postedOn()) {
       return;
     }
 
     return (
       <Tooltip text={this.getPostedOn(post)}>
         <span className="PostedOn">
-          {icon(this.getIcon(post))} {post.postedOn()}
+          <Icon name={this.getIcon(post)} /> {post.postedOn()}
         </span>
       </Tooltip>
     );
@@ -31,27 +27,16 @@ export default class PostedOn extends Component {
   }
 
   getIcon(post) {
-    switch (post.postedOn()) {
-      case 'Windows':
-        return 'fab fa-windows';
-      case 'Ubuntu':
-        return 'fab fa-ubuntu';
-      case 'Linux':
-        return 'fab fa-linux';
-      case 'macOS':
-        return 'fab fa-apple';
-      case 'Android':
-        return 'fab fa-android';
-      case 'iPhone':
-        return 'fab fa-apple';
-      case 'iPad':
-        return 'fab fa-apple';
-      case 'BlackBerry':
-        return 'fab fa-blackberry';
-      case 'Mobile':
-        return 'fas fa-mobile-alt';
-      default:
-        return 'fas fa-globe';
-    }
+    const os = post.postedOn();
+
+    if (os.startsWith('Windows')) return 'fab fa-windows';
+    if (os.startsWith('macOS')) return 'fab fa-apple';
+    if (os.startsWith('iOS') || os.startsWith('iPadOS')) return 'fab fa-apple';
+    if (os.startsWith('Android')) return 'fab fa-android';
+    if (os.startsWith('Ubuntu')) return 'fab fa-ubuntu';
+    if (os.startsWith('Manjaro') || os.startsWith('Linux')) return 'fab fa-linux';
+    if (os.startsWith('BlackBerry')) return 'fab fa-blackberry';
+
+    return 'fas fa-globe';
   }
 }
