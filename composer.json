@@ -27,6 +27,16 @@
             "Datlechin\\PostedOn\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Datlechin\\PostedOn\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test:unit": "phpunit -c tests/phpunit.unit.xml"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "homepage": "https://ngoquocdat.com",
     "extra": {
         "flarum-extension": {
@@ -51,10 +61,13 @@
                 "prettier": true,
                 "typescript": false,
                 "bundlewatch": false,
-                "backendTesting": false,
+                "backendTesting": true,
                 "editorConfig": true,
                 "styleci": true
             }
         }
+    },
+    "require-dev": {
+        "flarum/testing": "^2.0.0-beta"
     }
 }
