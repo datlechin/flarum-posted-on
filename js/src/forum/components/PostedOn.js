@@ -2,6 +2,7 @@ import app from 'flarum/forum/app';
 import Component from 'flarum/common/Component';
 import Tooltip from 'flarum/common/components/Tooltip';
 import Icon from 'flarum/common/components/Icon';
+import extractText from 'flarum/common/utils/extractText';
 
 const OS_ICON = {
   Windows: 'fab fa-windows',
@@ -50,8 +51,7 @@ function clientLabel(meta) {
 
 function deviceLabel(meta) {
   if (!meta || !meta.device || !meta.device.type) return null;
-  const localized = app.translator.trans(`datlechin-posted-on.device_types.${meta.device.type}`);
-  const type = typeof localized === 'string' ? localized : meta.device.type;
+  const type = extractText(app.translator.trans(`datlechin-posted-on.forum.device_types.${meta.device.type}`)) || meta.device.type;
   const parts = [type];
   if (meta.device.brand && meta.device.model) {
     parts.push(`${meta.device.brand} ${meta.device.model}`);
@@ -95,12 +95,12 @@ export default class PostedOn extends Component {
 
   tooltip({ os, client, device, legacy }) {
     if (!os && !client && !device) {
-      return app.translator.trans('datlechin-posted-on.forum.post.posted_on_text', { posted_on: legacy });
+      return extractText(app.translator.trans('datlechin-posted-on.forum.post.posted_on_text', { posted_on: legacy }));
     }
     const lines = [];
-    if (os) lines.push(`${app.translator.trans('datlechin-posted-on.forum.post.tooltip.os')}: ${os}`);
-    if (client) lines.push(`${app.translator.trans('datlechin-posted-on.forum.post.tooltip.client')}: ${client}`);
-    if (device) lines.push(`${app.translator.trans('datlechin-posted-on.forum.post.tooltip.device')}: ${device}`);
+    if (os) lines.push(`${extractText(app.translator.trans('datlechin-posted-on.forum.post.tooltip.os'))}: ${os}`);
+    if (client) lines.push(`${extractText(app.translator.trans('datlechin-posted-on.forum.post.tooltip.client'))}: ${client}`);
+    if (device) lines.push(`${extractText(app.translator.trans('datlechin-posted-on.forum.post.tooltip.device'))}: ${device}`);
     return lines.join('\n');
   }
 }
