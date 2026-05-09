@@ -8,13 +8,14 @@ import PostedOn from './components/PostedOn';
 
 app.initializers.add('datlechin/flarum-posted-on', () => {
   Post.prototype.postedOn = Model.attribute('postedOn');
+  Post.prototype.postedOnMeta = Model.attribute('postedOnMeta');
   User.prototype.disclosePostedOn = Model.attribute('disclosePostedOn');
 
   extend('flarum/forum/components/CommentPost', 'headerItems', function (items) {
     const post = this.attrs.post;
     const user = post.user();
 
-    if (!post.postedOn()) return;
+    if (!post.postedOn() && !post.postedOnMeta()) return;
     if (user && user.disclosePostedOn() === false) return;
 
     items.add('postedOn', PostedOn.component({ post }));

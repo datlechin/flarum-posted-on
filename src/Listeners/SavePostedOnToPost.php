@@ -11,77 +11,59 @@
 
 namespace Datlechin\PostedOn\Listeners;
 
-use DeviceDetector\ClientHints;
-use DeviceDetector\DeviceDetector;
+use Datlechin\PostedOn\Service\PlatformResolver;
 use Flarum\Post\Event\Saving;
+use Flarum\Settings\SettingsRepositoryInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 
 /**
- * Resolves the operating system of the poster from the User-Agent string and,
- * when present, User-Agent Client Hints (Sec-CH-UA-*).
+ * Captures the resolved platform on every new post.
  *
- * Why the rewrite: legacy UA-only sniffing can't tell Windows 11 from
- * Windows 10. Both report `Windows NT 10.0` because Microsoft froze the NT
- * version for compatibility. Client Hints carry the actual platform
- * version (Win 11 = "13.0.0" or higher, Win 10 = "10.0.0"), so we delegate
- * to matomo/device-detector which combines both signals and stays current
- * with new browser/OS releases.
+ * Bots are dropped (no metadata stored). Guests are dropped when the
+ * `skip_guests` setting is on; the user's own privacy toggle is enforced
+ * at render time on the frontend so existing rows stay intact when a user
+ * later flips it.
  *
- * For Firefox / Safari / Tor we still get only the legacy UA. The library
- * resolves that to "Windows" with no version rather than guessing, which is
- * the honest answer when the data isn't there.
+ * Two columns are written:
+ *   - `posted_on_meta` (JSON) — the rich snapshot the frontend uses for
+ *     icons, browser/device tooltips, and forward-compat re-rendering.
+ *   - `posted_on` (string) — a flat display string kept for older clients
+ *     and for callers that want one line without parsing the JSON.
  */
 class SavePostedOnToPost
 {
+    public function __construct(
+        protected PlatformResolver $resolver,
+        protected SettingsRepositoryInterface $settings,
+    ) {
+    }
+
     public function handle(Saving $event): void
     {
         if (! isset($event->data['attributes']['content'])) {
             return;
         }
 
-        $rendered = $this->renderPlatform();
-        if ($rendered !== null) {
-            $event->post->posted_on = $rendered;
+        if ((bool) $this->settings->get('datlechin-posted-on.skip_guests', false)
+            && $event->actor->isGuest()
+        ) {
+            return;
         }
-    }
 
-    /**
-     * Operating systems whose User-Agent version field is frozen for
-     * compatibility, so the legacy UA tells us nothing about the actual
-     * release. We trust the parsed version only when Client Hints back it
-     * up; otherwise we return the bare OS name.
-     */
-    private const VERSION_FROZEN_IN_UA = ['Windows', 'Mac'];
-
-    private function renderPlatform(): ?string
-    {
         $request = ServerRequestFactory::fromGlobals();
-        $userAgent = $request->getHeaderLine('User-Agent');
-        if ($userAgent === '') {
-            return null;
+        $platform = $this->resolver->resolve($request);
+
+        if ($platform->isBot) {
+            return;
         }
 
-        $hasPlatformVersionHint = trim($request->getHeaderLine('Sec-CH-UA-Platform-Version'), " \"") !== '';
-
-        $detector = new DeviceDetector($userAgent, ClientHints::factory($_SERVER));
-        $detector->parse();
-
-        $os = $detector->getOs();
-        if (empty($os) || empty($os['name']) || $os['name'] === DeviceDetector::UNKNOWN) {
-            return null;
+        if ($platform->osName === null && $platform->clientName === null) {
+            return;
         }
 
-        $rawName = (string) $os['name'];
-        $version = (string) ($os['version'] ?? '');
-
-        // device-detector keeps the legacy "Mac" label; surface it as macOS
-        // for end users since that's been Apple's branding since 10.12.
-        $displayName = $rawName === 'Mac' ? 'macOS' : $rawName;
-
-        if (in_array($rawName, self::VERSION_FROZEN_IN_UA, true) && ! $hasPlatformVersionHint) {
-            return $displayName;
-        }
-
-        return $version !== '' ? "{$displayName} {$version}" : $displayName;
+        $event->post->posted_on_meta = $platform->toArray();
+        $event->post->posted_on = $platform->display(
+            (string) $this->settings->get('datlechin-posted-on.display_mode', 'os_only'),
+        );
     }
 }

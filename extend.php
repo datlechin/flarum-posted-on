@@ -3,7 +3,7 @@
 /*
  * This file is part of datlechin/flarum-posted-on.
  *
- * Copyright (c) 2022 Ngo Quoc Dat.
+ * Copyright (c) 2026 Ngo Quoc Dat.
  *
  * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
@@ -26,7 +26,13 @@ return [
         ->js(__DIR__ . '/js/dist/forum.js')
         ->css(__DIR__ . '/less/forum.less'),
 
+    (new Extend\Frontend('admin'))
+        ->js(__DIR__ . '/js/dist/admin.js'),
+
     new Extend\Locales(__DIR__ . '/locale'),
+
+    (new Extend\Model(Post::class))
+        ->cast('posted_on_meta', 'array'),
 
     (new Extend\Middleware('forum'))
         ->add(AdvertiseClientHints::class),
@@ -37,10 +43,17 @@ return [
     (new Extend\Event())
         ->listen(PostSaving::class, SavePostedOnToPost::class),
 
+    (new Extend\Settings())
+        ->default('datlechin-posted-on.display_mode', 'os_only')
+        ->default('datlechin-posted-on.skip_guests', false)
+        ->serializeToForum('postedOnDisplayMode', 'datlechin-posted-on.display_mode'),
+
     (new Extend\ApiResource(PostResource::class))
         ->fields(fn () => [
             Schema\Str::make('postedOn')
                 ->get(fn (Post $post) => $post->posted_on),
+            Schema\Arr::make('postedOnMeta')
+                ->get(fn (Post $post) => $post->posted_on_meta),
         ]),
 
     (new Extend\ApiResource(UserResource::class))
