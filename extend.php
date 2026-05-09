@@ -12,6 +12,7 @@
 namespace Datlechin\PostedOn;
 
 use Datlechin\PostedOn\Listeners\SavePostedOnToPost;
+use Datlechin\PostedOn\Middleware\AdvertiseClientHints;
 use Flarum\Api\Resource\PostResource;
 use Flarum\Api\Resource\UserResource;
 use Flarum\Api\Schema;
@@ -26,6 +27,12 @@ return [
         ->css(__DIR__ . '/less/forum.less'),
 
     new Extend\Locales(__DIR__ . '/locale'),
+
+    (new Extend\Middleware('forum'))
+        ->add(AdvertiseClientHints::class),
+
+    (new Extend\Middleware('api'))
+        ->add(AdvertiseClientHints::class),
 
     (new Extend\Event())
         ->listen(PostSaving::class, SavePostedOnToPost::class),

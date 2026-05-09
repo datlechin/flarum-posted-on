@@ -8,7 +8,8 @@
     "type": "flarum-extension",
     "license": "MIT",
     "require": {
-        "flarum/core": "^2.0.0-beta"
+        "flarum/core": "^2.0.0-beta",
+        "matomo/device-detector": "^6.5"
     },
     "authors": [
         {
